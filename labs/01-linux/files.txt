@@ -1,0 +1,8 @@
+total 0
+drwxr-xr-x  6 sebastian  staff  192 Jul 22 10:35 .
+drwxr-xr-x  3 sebastian  staff   96 Jul 21 17:21 ..
+drwxr-xr-x  3 sebastian  staff   96 Jul 21 17:21 configs
+-rw-r--r--  1 sebastian  staff    0 Jul 22 10:35 files.txt
+drwxr-xr-x  3 sebastian  staff   96 Jul 21 17:22 logs
+drwxr-xr-x  3 sebastian  staff   96 Jul 21 17:22 scripts
+Hello DevOps
