@@ -5,6 +5,31 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-  - script: echo "Hello from Azure DevOps!"
-    displayName: "First pipeline"
-    
+  - script: |
+      echo "===== SYSTEM INFO ====="
+      uname -a
+
+      echo ""
+      echo "===== CURRENT USER ====="
+      whoami
+
+      echo ""
+      echo "===== CURRENT DIRECTORY ====="
+      pwd
+
+      echo ""
+      echo "===== FILES ====="
+      ls -la
+
+      echo ""
+      echo "===== GIT VERSION ====="
+      git --version
+
+      echo ""
+      echo "===== DOCKER VERSION ====="
+      docker --version
+
+      echo ""
+      echo "===== PYTHON VERSION ====="
+      python3 --version
+    displayName: "Inspect Azure Agent"
