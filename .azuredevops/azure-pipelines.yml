@@ -5,5 +5,36 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+  - checkout: self
+    displayName: "Checkout repository"
+
   - script: ./scripts/validate-project.sh
-    displayName: "Validate Project"
+    displayName: "Validate project"
+
+  - script: |
+      echo "===== BUILD ENVIRONMENT ====="
+
+      echo ""
+      echo "Current directory:"
+      pwd
+
+      echo ""
+      echo "Current user:"
+      whoami
+
+      echo ""
+      echo "Git version:"
+      git --version
+
+      echo ""
+      echo "Python version:"
+      python3 --version
+
+      echo ""
+      echo "Docker version:"
+      docker --version
+
+      echo ""
+      echo "Repository files:"
+      ls -la
+    displayName: "Inspect build environment"
