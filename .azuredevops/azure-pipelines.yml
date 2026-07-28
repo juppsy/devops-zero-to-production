@@ -1,6 +1,10 @@
 trigger:
   - main
 
+variables:
+  APP_NAME: devops-zero-to-production
+  ENVIRONMENT: development
+
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -13,6 +17,11 @@ steps:
 
   - script: |
       echo "===== BUILD ENVIRONMENT ====="
+
+      echo ""
+      echo "Application: $(APP_NAME)"
+
+      echo "Environment: $(ENVIRONMENT)"
 
       echo ""
       echo "Current directory:"
