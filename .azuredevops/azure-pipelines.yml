@@ -51,12 +51,12 @@ steps:
   - script: |
       echo "===== BUILD DOCKER IMAGE ====="
 
-      docker build -f docker/Dockerfile -t demo-app:${Build.BuildId} .
+      docker build -f docker/Dockerfile -t demo-app:$(Build.BuildId) .
     displayName: "Build Docker image"
 
   - script: |
       echo "===== SMOKE TEST DOCKER IMAGE ====="
-      
+
       docker run -d --name demo-container -p 8080:8080 demo-app:$(Build.BuildId)
 
       sleep 5
