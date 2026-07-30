@@ -47,3 +47,22 @@ steps:
       echo "Repository files:"
       ls -la
     displayName: "Inspect build environment"
+  
+  - script: |
+      echo "===== BUILD DOCKER IMAGE ====="
+
+      docker build -f docker/Dockerfile -t demo-app:${Build.BuildId} .
+    displayName: "Build Docker image"
+
+  - script: |
+      echo "===== SMOKE TEST DOCKER IMAGE ====="
+      
+      docker run -d --name demo-container -p 8080:8080 demo-app:$(Build.BuildId)
+
+      sleep 5
+
+      curl -f http://localhost:8080
+
+      docker stop demo-container
+      docker rm demo-container
+    displayName: "Smoke test Docker image"
