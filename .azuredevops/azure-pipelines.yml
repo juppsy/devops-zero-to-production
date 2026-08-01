@@ -48,20 +48,19 @@ steps:
       ls -la
     displayName: "Inspect build environment"
 
-  - task: SonarQubePrepare@3
+  - task: SonarCloudPrepare@4
     inputs:
-      SonarQube: "service connection"
-      scannerMode: "CLI"
-      configMode: "manual"
-      cliProjectKey: "juppsy_devops-zero-to-production"
-      cliProjectName: "devops-zero-to-production"
-      cliSources: "."
+      SonarQube: 'sonarqube connection'
+      organization: 'juppsy'
+      scannerMode: 'cli'
+      cliScannerVersion: '8.1.0.6389'
+      configMode: 'file'
     displayName: "Prepare SonarCloud Analysis"
 
-  - task: SonarQubeAnalyze@3
+  - task: SonarQubeAnalyze@4
     displayName: "Run SonarCloud Analysis"
   
-  - task: SonarQubePublish@3
+  - task: SonarQubePublish@4
     inputs:
       pollingTimeoutSec: "300"
     displayName: "Check Quality Gate"
