@@ -58,6 +58,8 @@ steps:
     displayName: "Prepare SonarCloud Analysis"
 
   - task: SonarQubeAnalyze@4
+    inputs:
+      jdkversion: 'JAVA_HOME_17_X64'
     displayName: "Run SonarCloud Analysis"
   
   - task: SonarQubePublish@4
