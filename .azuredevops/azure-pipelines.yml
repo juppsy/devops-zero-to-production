@@ -67,6 +67,13 @@ steps:
       pollingTimeoutSec: "300"
     displayName: "Check Quality Gate"
 
+  - task: SnykSecurityScan@1
+    inputs:
+      serviceConnectionEndpoint: 'snyk connection'
+      testType: 'app'
+      monitorWhen: 'always'
+      failOnIssues: true
+
   - script: |
       echo "===== BUILD DOCKER IMAGE ====="
 
