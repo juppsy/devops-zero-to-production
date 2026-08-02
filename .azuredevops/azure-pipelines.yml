@@ -67,6 +67,11 @@ steps:
       pollingTimeoutSec: "300"
     displayName: "Check Quality Gate"
 
+  - script: |
+      python3 -m pip install --upgrade pip
+      pip3 install -r app/requirements.txt
+    displayName: "Install Python dependencies"
+
   - task: SnykSecurityScan@1
     inputs:
       serviceConnectionEndpoint: 'snyk connection'
