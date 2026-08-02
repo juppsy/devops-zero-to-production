@@ -71,6 +71,7 @@ steps:
     inputs:
       serviceConnectionEndpoint: 'snyk connection'
       testType: 'app'
+      targetFile: 'app/requirements.txt'
       monitorWhen: 'always'
       failOnIssues: true
 
