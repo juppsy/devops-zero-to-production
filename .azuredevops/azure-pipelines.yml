@@ -47,6 +47,10 @@ steps:
       echo "Repository files:"
       ls -la
     displayName: "Inspect build environment"
+  
+  - script: |
+      python -m ruff check .
+    displayName: "Run Ruff"
 
   - task: SonarCloudPrepare@4
     inputs:
