@@ -34,15 +34,25 @@ The goal is not only to learn the tools, but also to understand how they work to
 * Bash
 * Python
 
+## Application
+
+* FastAPI
+* Uvicorn
+
+## Code Quality
+
+* Ruff
+* Pytest
+
 ## Containers
 
-* Docker *(coming soon)*
+* Docker
 * Kubernetes *(coming soon)*
 
 ## Security
 
-* SonarCloud *(coming soon)*
-* Snyk *(coming soon)*
+* SonarCloud
+* Snyk
 
 ## Monitoring
 
@@ -61,7 +71,7 @@ The goal is not only to learn the tools, but also to understand how they work to
 ```text
 .
 ├── .azuredevops/         # Azure DevOps YAML pipelines
-├── app/                  # Demo application
+├── app/                  # FastAPI demo application
 ├── azure-pipelines/      # Pipeline examples and templates
 ├── docker/               # Docker resources
 ├── docs/                 # Documentation
@@ -69,6 +79,7 @@ The goal is not only to learn the tools, but also to understand how they work to
 ├── monitoring/           # Monitoring configuration
 ├── scripts/              # Reusable Bash scripts
 ├── terraform/            # Infrastructure as Code (future)
+├── tests/                # Automated API tests
 ├── .gitignore
 ├── LICENSE
 └── README.md
@@ -89,21 +100,28 @@ The goal is not only to learn the tools, but also to understand how they work to
 
 ## CI/CD
 
+* [x] Docker image build
 * [ ] Multi-stage pipelines
 * [ ] Pipeline variables
 * [ ] Pipeline conditions
 * [ ] Build artifacts
 * [ ] Release workflows
 
+## Code Quality
+
+* [x] Ruff
+* [x] Automated API tests with Pytest
+* [ ] Test coverage
+
 ## Security
 
-* [ ] SonarCloud
-* [ ] Snyk
+* [x] SonarCloud
+* [x] Snyk
 * [ ] Security gates
 
 ## Containers
 
-* [ ] Docker image build
+* [x] Docker image build
 * [ ] Docker image publishing
 * [ ] Container best practices
 
@@ -134,11 +152,16 @@ The goal is not only to learn the tools, but also to understand how they work to
 
 # 🚦 Current CI Pipeline
 
-Current pipeline performs:
+Current pipeline currently performs:
 
 * Repository checkout
 * Project validation
-* Build environment inspection
+* Python dependency installation
+* Ruff linting
+* Automated API tests with Pytest
+* SonarCloud static code analysis
+* Snyk dependency vulnerability scanning
+* Docker image build
 
 Additional stages will be introduced incrementally throughout the project.
 
@@ -189,6 +212,8 @@ feat(k8s): deploy demo application
 ci(azure): add initial pipeline
 ci(validation): add project validation script
 
+test: add API endpoint tests
+
 fix(pipeline): handle missing README
 fix(docker): reduce image size
 
@@ -203,11 +228,10 @@ chore: update dependencies
 
 # 🚀 Next Milestones
 
-* Containerize the application
-* Build Docker images in Azure DevOps
-* Add SonarCloud Quality Gates
-* Integrate Snyk security scanning
+* Refactor the CI pipeline into multiple stages
 * Publish Docker images
+* Add SonarCloud Quality Gates
+* Implement build artifacts
 * Deploy to Kubernetes
 * Configure monitoring
 * Implement alerting
