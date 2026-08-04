@@ -47,6 +47,11 @@ steps:
       echo "Repository files:"
       ls -la
     displayName: "Inspect build environment"
+
+  - script: |
+      python3 -m pip install --upgrade pip
+      pip3 install -r app/requirements.txt
+    displayName: "Install Python dependencies"
   
   - script: |
       python -m ruff check .
@@ -70,11 +75,6 @@ steps:
     inputs:
       pollingTimeoutSec: "300"
     displayName: "Check Quality Gate"
-
-  - script: |
-      python3 -m pip install --upgrade pip
-      pip3 install -r app/requirements.txt
-    displayName: "Install Python dependencies"
 
   - task: SnykSecurityScan@1
     inputs:
