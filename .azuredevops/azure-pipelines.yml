@@ -57,6 +57,10 @@ steps:
       python -m ruff check .
     displayName: "Run Ruff"
 
+  - script: |
+      python -m pytest
+    displayName: "Run tests"
+
   - task: SonarCloudPrepare@4
     inputs:
       SonarQube: 'sonarqube connection'

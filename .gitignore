@@ -18,5 +18,12 @@ venv/
 # Environment variables
 .env
 
+# Virtual environments
+.venv/
+app/.venv/
+
+# Test cache
+.pytest_cache/
+
 # Ruff
 app/.ruff_cache/
