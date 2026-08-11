@@ -6,6 +6,11 @@ variables:
   ENVIRONMENT: development
 
 stages:
+
+  # ==========================================
+  # VALIDATE
+  # ==========================================
+
   - stage: Validate
     displayName: "Validate"
 
@@ -56,11 +61,31 @@ stages:
               ls -la
             displayName: "Inspect build environment"
 
+
+  # ==========================================
+  # QUALITY
+  # ==========================================
+
+  - stage: Quality
+    displayName: "Quality"
+    dependsOn: Validate
+
+    jobs:
+      - job: Quality
+        displayName: "Quality Checks"
+
+        pool:
+          vmImage: 'ubuntu-latest'
+
+        steps:
+          - checkout: self
+            displayName: "Checkout repository"
+
           - script: |
               python3 -m pip install --upgrade pip
               pip3 install -r app/requirements.txt
             displayName: "Install Python dependencies"
-      
+
           - script: |
               python -m ruff check .
             displayName: "Run Ruff"
@@ -68,6 +93,31 @@ stages:
           - script: |
               python -m pytest
             displayName: "Run tests"
+
+
+  # ==========================================
+  # SECURITY
+  # ==========================================
+
+  - stage: Security
+    displayName: "Security"
+    dependsOn: Quality
+
+    jobs:
+      - job: Security
+        displayName: "Security Checks"
+
+        pool:
+          vmImage: 'ubuntu-latest'
+
+        steps:
+          - checkout: self
+            displayName: "Checkout repository"
+
+          - script: |
+              python3 -m pip install --upgrade pip
+              pip3 install -r app/requirements.txt
+            displayName: "Install Python dependencies"
 
           - task: SonarCloudPrepare@4
             inputs:
@@ -82,7 +132,7 @@ stages:
             inputs:
               jdkversion: 'JAVA_HOME_17_X64'
             displayName: "Run SonarCloud Analysis"
-          
+
           - task: SonarCloudPublish@4
             inputs:
               pollingTimeoutSec: "300"
@@ -96,16 +146,41 @@ stages:
               monitorWhen: 'always'
               failOnIssues: true
 
+
+  # ==========================================
+  # BUILD
+  # ==========================================
+
+  - stage: Build
+    displayName: "Build"
+    dependsOn: Security
+
+    jobs:
+      - job: Build
+        displayName: "Build Docker Image"
+
+        pool:
+          vmImage: 'ubuntu-latest'
+
+        steps:
+          - checkout: self
+            displayName: "Checkout repository"
+
           - script: |
               echo "===== BUILD DOCKER IMAGE ====="
 
-              docker build -f docker/Dockerfile -t demo-app:$(Build.BuildId) .
+              docker build \
+                -f docker/Dockerfile \
+                -t demo-app:$(Build.BuildId) .
             displayName: "Build Docker image"
 
           - script: |
               echo "===== SMOKE TEST DOCKER IMAGE ====="
 
-              docker run -d --name demo-container -p 8080:8080 demo-app:$(Build.BuildId)
+              docker run -d \
+                --name demo-container \
+                -p 8080:8080 \
+                demo-app:$(Build.BuildId)
 
               sleep 5
 
