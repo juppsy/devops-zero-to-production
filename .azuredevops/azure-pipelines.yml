@@ -5,104 +5,112 @@ variables:
   APP_NAME: devops-zero-to-production
   ENVIRONMENT: development
 
-pool:
-  vmImage: 'ubuntu-latest'
+stages:
+  - stage: Validate
+    displayName: "Validate"
 
-steps:
-  - checkout: self
-    displayName: "Checkout repository"
+    jobs: 
+      - job: Validate
+        displayName: "Validate Project"
 
-  - script: ./scripts/validate-project.sh
-    displayName: "Validate project"
+        pool:
+          vmImage: 'ubuntu-latest'
 
-  - script: |
-      echo "===== BUILD ENVIRONMENT ====="
+        steps:
+          - checkout: self
+            displayName: "Checkout repository"
 
-      echo ""
-      echo "Application: $(APP_NAME)"
+          - script: ./scripts/validate-project.sh
+            displayName: "Validate project"
 
-      echo "Environment: $(ENVIRONMENT)"
+          - script: |
+              echo "===== BUILD ENVIRONMENT ====="
 
-      echo ""
-      echo "Current directory:"
-      pwd
+              echo ""
+              echo "Application: $(APP_NAME)"
 
-      echo ""
-      echo "Current user:"
-      whoami
+              echo "Environment: $(ENVIRONMENT)"
 
-      echo ""
-      echo "Git version:"
-      git --version
+              echo ""
+              echo "Current directory:"
+              pwd
 
-      echo ""
-      echo "Python version:"
-      python3 --version
+              echo ""
+              echo "Current user:"
+              whoami
 
-      echo ""
-      echo "Docker version:"
-      docker --version
+              echo ""
+              echo "Git version:"
+              git --version
 
-      echo ""
-      echo "Repository files:"
-      ls -la
-    displayName: "Inspect build environment"
+              echo ""
+              echo "Python version:"
+              python3 --version
 
-  - script: |
-      python3 -m pip install --upgrade pip
-      pip3 install -r app/requirements.txt
-    displayName: "Install Python dependencies"
-  
-  - script: |
-      python -m ruff check .
-    displayName: "Run Ruff"
+              echo ""
+              echo "Docker version:"
+              docker --version
 
-  - script: |
-      python -m pytest
-    displayName: "Run tests"
+              echo ""
+              echo "Repository files:"
+              ls -la
+            displayName: "Inspect build environment"
 
-  - task: SonarCloudPrepare@4
-    inputs:
-      SonarQube: 'sonarqube connection'
-      organization: 'juppsy'
-      scannerMode: 'cli'
-      cliScannerVersion: '8.1.0.6389'
-      configMode: 'file'
-    displayName: "Prepare SonarCloud Analysis"
+          - script: |
+              python3 -m pip install --upgrade pip
+              pip3 install -r app/requirements.txt
+            displayName: "Install Python dependencies"
+      
+          - script: |
+              python -m ruff check .
+            displayName: "Run Ruff"
 
-  - task: SonarCloudAnalyze@4
-    inputs:
-      jdkversion: 'JAVA_HOME_17_X64'
-    displayName: "Run SonarCloud Analysis"
-  
-  - task: SonarCloudPublish@4
-    inputs:
-      pollingTimeoutSec: "300"
-    displayName: "Check Quality Gate"
+          - script: |
+              python -m pytest
+            displayName: "Run tests"
 
-  - task: SnykSecurityScan@1
-    inputs:
-      serviceConnectionEndpoint: 'snyk connection'
-      testType: 'app'
-      targetFile: 'app/requirements.txt'
-      monitorWhen: 'always'
-      failOnIssues: true
+          - task: SonarCloudPrepare@4
+            inputs:
+              SonarQube: 'sonarqube connection'
+              organization: 'juppsy'
+              scannerMode: 'cli'
+              cliScannerVersion: '8.1.0.6389'
+              configMode: 'file'
+            displayName: "Prepare SonarCloud Analysis"
 
-  - script: |
-      echo "===== BUILD DOCKER IMAGE ====="
+          - task: SonarCloudAnalyze@4
+            inputs:
+              jdkversion: 'JAVA_HOME_17_X64'
+            displayName: "Run SonarCloud Analysis"
+          
+          - task: SonarCloudPublish@4
+            inputs:
+              pollingTimeoutSec: "300"
+            displayName: "Check Quality Gate"
 
-      docker build -f docker/Dockerfile -t demo-app:$(Build.BuildId) .
-    displayName: "Build Docker image"
+          - task: SnykSecurityScan@1
+            inputs:
+              serviceConnectionEndpoint: 'snyk connection'
+              testType: 'app'
+              targetFile: 'app/requirements.txt'
+              monitorWhen: 'always'
+              failOnIssues: true
 
-  - script: |
-      echo "===== SMOKE TEST DOCKER IMAGE ====="
+          - script: |
+              echo "===== BUILD DOCKER IMAGE ====="
 
-      docker run -d --name demo-container -p 8080:8080 demo-app:$(Build.BuildId)
+              docker build -f docker/Dockerfile -t demo-app:$(Build.BuildId) .
+            displayName: "Build Docker image"
 
-      sleep 5
+          - script: |
+              echo "===== SMOKE TEST DOCKER IMAGE ====="
 
-      curl -f http://localhost:8080
+              docker run -d --name demo-container -p 8080:8080 demo-app:$(Build.BuildId)
 
-      docker stop demo-container
-      docker rm demo-container
-    displayName: "Smoke test Docker image"
+              sleep 5
+
+              curl -f http://localhost:8080
+
+              docker stop demo-container
+              docker rm demo-container
+            displayName: "Smoke test Docker image"
