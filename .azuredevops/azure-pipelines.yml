@@ -4,6 +4,9 @@ trigger:
 variables:
   APP_NAME: devops-zero-to-production
   ENVIRONMENT: development
+  IMAGE_NAME: demo-app
+  CONTAINER_NAME: demo-container
+  CONTAINER_PORT: 8080
 
 stages:
 
@@ -171,21 +174,21 @@ stages:
 
               docker build \
                 -f docker/Dockerfile \
-                -t demo-app:$(Build.BuildId) .
+                -t $(IMAGE_NAME):$(Build.BuildId) .
             displayName: "Build Docker image"
 
           - script: |
               echo "===== SMOKE TEST DOCKER IMAGE ====="
 
               docker run -d \
-                --name demo-container \
-                -p 8080:8080 \
-                demo-app:$(Build.BuildId)
+                --name $(CONTAINER_NAME) \
+                -p $(CONTAINER_PORT):$(CONTAINER_PORT) \
+                $(IMAGE_NAME):$(Build.BuildId)
 
               sleep 5
 
-              curl -f http://localhost:8080
+              curl -f http://localhost:$(CONTAINER_PORT)
 
-              docker stop demo-container
-              docker rm demo-container
+              docker stop $(CONTAINER_NAME)
+              docker rm $(CONTAINER_NAME)
             displayName: "Smoke test Docker image"
